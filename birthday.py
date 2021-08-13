@@ -1,7 +1,6 @@
 from hoshino import Service
 from hoshino.typing import CQEvent
-from hoshino.modules.priconne import chara
-import json
+from hoshino.modules.priconne import chara, _pcr_data
 
 import datetime
 import hoshino
@@ -30,9 +29,9 @@ def get_cqcode(chara_id):
 
 @bdrm.scheduled_job('cron', hour='00', minute='01')
 async def birthday_reminder():
-    with open(r"hoshino\modules\birthday\unitdata.json", "r", encoding='utf-8') as f:
-        unitdata = json.load(f)
-    chara_id_list = list(unitdata.keys())
+    # _pcr_data中添加了角色资料，废弃json，改用前者
+    unitdata = _pcr_data.CHARA_PROFILE
+    chara_id_list = list(_pcr_data.CHARA_PROFILE.keys())
     month = datetime.datetime.now().month
     day = datetime.datetime.now().day
     birthdate = str(month)+'月' + str(day) + '日'
@@ -40,9 +39,9 @@ async def birthday_reminder():
     #测试用
     #birthdate = '2月2日'
     birthday_chara_id_lst = []
-    for i in range(len(chara_id_list)):
-        if unitdata[chara_id_list[i]]['生日'] == birthdate:
-            birthday_chara_id_lst.append(int(chara_id_list[i]))
+    for i in chara_id_list:
+        if unitdata[i]['生日'] == birthdate:
+            birthday_chara_id_lst.append(i)
     ninsuu = len(birthday_chara_id_lst)
     if ninsuu == 0:
         print('无人过生日')
@@ -57,8 +56,8 @@ async def birthday_reminder():
 
 @svbdsrh.on_keyword(('生日是那天','生日是哪天','生日那天','生日哪天','生日在那天','生日在哪天','那天过生日','哪天过生日','那天生日','哪天生日'))
 async def birthday_search_chara(bot, ev: CQEvent):
-    with open(r"hoshino\modules\birthday\unitdata.json", "r", encoding='utf-8') as f:
-        unitdata = json.load(f)
+    # _pcr_data中添加了角色资料，废弃json，改用前者
+    unitdata = _pcr_data.CHARA_PROFILE
     name = ev['raw_message'].replace("生日", "").replace("过", "").replace("在", "").replace("哪天", "").replace("那天", "").replace("的", "").replace("啊", "").replace("呀", "").replace("呢", "").replace(" ","").replace("？","")
     if not name:
         return
@@ -67,7 +66,7 @@ async def birthday_search_chara(bot, ev: CQEvent):
     if chara_id == chara.UNKNOWN:
         chara_id, guess_name, confi = chara.guess_id(name)
     if confi > 60:
-        chara_birthday = unitdata[str(chara_id)]['生日']
+        chara_birthday = unitdata[chara_id]['生日']
         if not chara_birthday:
             await bot.send(ev, '没有找到角色的生日信息呢。。。')
             return
@@ -77,9 +76,9 @@ async def birthday_search_chara(bot, ev: CQEvent):
 
 @svbdsrh.on_prefix(('谁的生日','谁生日'))
 async def birthday_search_date(bot, ev: CQEvent):
-    with open(r"hoshino\modules\birthday\unitdata.json", "r", encoding='utf-8') as f:
-        unitdata = json.load(f)
-    chara_id_list = list(unitdata.keys())
+    # _pcr_data中添加了角色资料，废弃json，改用前者
+    unitdata = _pcr_data.CHARA_PROFILE
+    chara_id_list = list(_pcr_data.CHARA_PROFILE.keys())
     birthdate = ev['raw_message'].replace("谁的生日", "").replace("过", "").replace("在", "").replace("谁生日", "").replace("号", "日").replace("的", "").replace("生日", "").replace("-", "").replace("是", "").replace(" ","").replace("？","")
     #检测并转换生日格式
     if re.match(r"([01][0-9][0123][0-9])",birthdate):
@@ -98,9 +97,9 @@ async def birthday_search_date(bot, ev: CQEvent):
         await bot.send(ev, f'请输入正确的生日格式，如"0723"或者"7月23日"')
         return
     birthday_chara_id_lst = []
-    for i in range(len(chara_id_list)):
-        if unitdata[chara_id_list[i]]['生日'] == birthdate:
-            birthday_chara_id_lst.append(int(chara_id_list[i]))
+    for i in chara_id_list:
+        if unitdata[i]['生日'] == birthdate:
+            birthday_chara_id_lst.append(i)
     ninsuu = len(birthday_chara_id_lst)
     if ninsuu == 0:
         print('无人过生日')
