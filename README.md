@@ -1,8 +1,9 @@
 # hoshinobot-birthday
 hoshinobot插件：角色生日提醒，以及通过生日查询角色。
 
-添加方法：1.将birthday文件夹放到HoshinoBot\hoshino\modules目录下，在__bot__.py内添加插件。\n
-        或者 2.将birthday.py放到HoshinoBot\hoshino\modules\priconne\games目录下，无需修改__bot__.py。
+添加方法（二选一）：
+1.将birthday文件夹放到HoshinoBot\hoshino\modules目录下，在__bot__.py内添加插件。
+2.将birthday.py放到HoshinoBot\hoshino\modules\priconne\games目录下，无需修改__bot__.py。
 
 * 2021/08/13：将角色生日数据获取来源修改为priconne\\_pcr_data.py。
 * 别问为什么一开始不这么写，一开始这里根本没有角色生日信息！
